@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\josep\source\repos\ClockbusterApps\obj\Debug\net10.0-windows\
+C:\Users\josep\Documents\GitHub\ClockbusterApps\obj\Debug\net10.0-windows\
 ClockbusterApps
 none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\josep\source\repos\ClockbusterApps\App.xaml
+C:\Users\josep\Documents\GitHub\ClockbusterApps\App.xaml
 21265100056
 
 9-855441513
 211-2045648899
 MainWindow.xaml;Views\TimeclockViewerWindow.xaml;
 
-True
+False
 

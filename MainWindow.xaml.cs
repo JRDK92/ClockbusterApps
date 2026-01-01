@@ -1,49 +1,60 @@
 ﻿using ClockbusterApps.Services;
 using ClockbusterApps.Views;
-using ClockbusterApps.Services;
-using ClockbusterApps.Views;
+using System;
 using System.Windows;
+using System.Windows.Media;
 
-namespace ClockbusterApps;
-
-public partial class MainWindow : Window
+namespace ClockbusterApps
 {
-    private readonly TimingService _timingService;
-    private bool _isLogging;
-
-    public MainWindow()
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-        _timingService = new TimingService();
-    }
+        private readonly TimingService _timingService;
+        private bool _isLogging;
 
-    private void BtnToggleLogging_Click(object sender, RoutedEventArgs e)
-    {
-        if (!_isLogging)
+        public MainWindow()
         {
-            _timingService.Start();
-            BtnToggleLogging.Content = "Stop Logging";
-            StatusText.Text = "Status: Logging Active";
-            _isLogging = true;
+            InitializeComponent();
+            _timingService = new TimingService();
         }
-        else
+
+        private void BtnToggleLogging_Click(object sender, RoutedEventArgs e)
         {
-            _timingService.Stop();
-            BtnToggleLogging.Content = "Start Logging";
-            StatusText.Text = "Status: Idle";
-            _isLogging = false;
+            if (!_isLogging)
+            {
+                _timingService.Start();
+
+                BtnToggleLogging.Content = "Stop Monitoring";
+                BtnToggleLogging.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C"));
+                StatusText.Text = "Monitoring";
+                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#27AE60"));
+                _isLogging = true;
+            }
+            else
+            {
+                _timingService.Stop();
+
+                BtnToggleLogging.Content = "Start Monitoring";
+                BtnToggleLogging.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#27AE60"));
+                StatusText.Text = "Idle";
+                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#7F8C8D"));
+                _isLogging = false;
+            }
         }
-    }
 
-    private void ViewData_Click(object sender, RoutedEventArgs e)
-    {
-        var viewer = new TimeclockViewerWindow();
-        viewer.Owner = this;
-        viewer.Show();
-    }
+        private void ViewData_Click(object sender, RoutedEventArgs e)
+        {
+            var viewer = new TimeclockViewerWindow();
+            viewer.Owner = this;
+            viewer.Show();
+        }
 
-    private void Exit_Click(object sender, RoutedEventArgs e)
-    {
-        Application.Current.Shutdown();
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isLogging)
+            {
+                _timingService.Stop();
+            }
+            Application.Current.Shutdown();
+        }
     }
 }

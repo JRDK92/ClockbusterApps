@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jTBMHugzq7c=",
+  "dgSpecHash": "KhLYjIw2vOs=",
   "success": true,
-  "projectFilePath": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\ClockbusterApps.csproj",
+  "projectFilePath": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\ClockbusterApps.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\josep\\.nuget\\packages\\dapper\\2.1.66\\dapper.2.1.66.nupkg.sha512",
     "C:\\Users\\josep\\.nuget\\packages\\microsoft.data.sqlite\\10.0.1\\microsoft.data.sqlite.10.0.1.nupkg.sha512",

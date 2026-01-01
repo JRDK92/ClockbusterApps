@@ -1,12 +1,111 @@
 ﻿<Window x:Class="ClockbusterApps.Views.TimeclockViewerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClockbusterApps.Views"
-        mc:Ignorable="d"
-        Title="TimeclockViewerWindow" Height="450" Width="800">
+        Title="Application Usage Data" Height="600" Width="950"
+        WindowStartupLocation="CenterScreen">
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1" Padding="15">
+            <StackPanel>
+                <TextBlock Text="Session History" 
+                           FontSize="18" 
+                           FontWeight="Bold" 
+                           Foreground="#2C3E50"
+                           Margin="0,0,0,10"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Refresh" 
+                            Click="Refresh_Click" 
+                            Width="100" 
+                            Height="32"
+                            Margin="0,0,10,0"
+                            Background="#3498DB"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="Clear All Data" 
+                            Click="ClearAll_Click" 
+                            Width="120"
+                            Height="32"
+                            Background="#E74C3C"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <DataGrid Grid.Row="1" 
+                  x:Name="DataGridLogs"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Margin="15"
+                  GridLinesVisibility="Horizontal"
+                  HeadersVisibility="Column"
+                  AlternatingRowBackground="#F8F9FA"
+                  RowHeight="32"
+                  CanUserSortColumns="True"
+                  FontSize="13">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Session ID" Binding="{Binding Id}" Width="110"/>
+                <DataGridTextColumn Header="Application" Binding="{Binding ApplicationName}" Width="*" MinWidth="150" FontWeight="SemiBold"/>
+                <DataGridTextColumn Header="Start Time" Binding="{Binding StartTimeStr}" Width="150"/>
+                <DataGridTextColumn Header="End Time" Binding="{Binding EndTimeStr}" Width="150"/>
+                <DataGridTextColumn Header="Duration (Min)" Binding="{Binding DurationMinutes}" Width="120"/>
+            </DataGrid.Columns>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#E9ECEF"/>
+                    <Setter Property="Foreground" Value="#2C3E50"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="10,8"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                    <Setter Property="BorderBrush" Value="#DEE2E6"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+        </DataGrid>
+
+        <StatusBar Grid.Row="2" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="0,1,0,0">
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="StatusTextViewer" Text="Ready" FontSize="13"/>
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>
