@@ -202,7 +202,8 @@ namespace ClockbusterApps.Services
                 "shellexperiencehost", "runtimebroker", "applicationframehost",
                 "systemsettings", "lockapp", "sihost", "fontdrvhost",
                 "conhost", "backgroundtaskhost", "securityhealthsystray",
-                "textinputhost", "idle", "system"
+                "textinputhost", "idle", "system", "livepreviewsurface", "nahimic", "githubdesktop",
+                "discord", "steam", "epicgameslauncher"
             };
 
             return systemProcesses.Contains(processName);

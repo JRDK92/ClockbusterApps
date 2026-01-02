@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ClockbusterApps")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0391a958d560cf6719a7c338108cd40f1880314")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fbacf29577f976a27cf41b6269374eb427a5f41d")]
 [assembly: System.Reflection.AssemblyProductAttribute("ClockbusterApps")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ClockbusterApps")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

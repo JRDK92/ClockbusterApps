@@ -1,12 +1,11 @@
 ﻿<Window x:Class="ClockbusterApps.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Clockbuster Apps" Height="350" Width="500"
+        Title="Clockbuster Apps - Application Monitor" Height="400" Width="600"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="CanMinimize">
-
+        ResizeMode="CanResize">
     <DockPanel>
-        <Menu DockPanel.Dock="Top" Background="White" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1">
+        <Menu DockPanel.Dock="Top" Background="White" BorderBrush="#E5E5E5" BorderThickness="0,0,0,1">
             <MenuItem Header="File">
                 <MenuItem Header="Exit" Click="Exit_Click" />
             </MenuItem>
@@ -15,102 +14,92 @@
             </MenuItem>
         </Menu>
 
-        <StatusBar DockPanel.Dock="Bottom" Background="#F5F5F5" Height="28">
+        <StatusBar DockPanel.Dock="Bottom" Background="#F0F0F0" Height="24" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0">
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Status: " FontWeight="SemiBold" FontSize="12"/>
-                    <TextBlock x:Name="StatusText" Text="Idle" FontSize="12"/>
+                    <TextBlock Text="Status: " FontSize="11"/>
+                    <TextBlock x:Name="StatusText" Text="Idle" FontSize="11"/>
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>
 
-        <Grid Margin="20">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="Application Monitor" 
-                           FontSize="24" FontWeight="Bold" 
-                           Margin="0,0,0,10" 
-                           HorizontalAlignment="Center"
-                           Foreground="#2C3E50"/>
+        <Grid Margin="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <TextBlock Text="Track which applications you use and for how long" 
-                           FontSize="13" 
-                           Margin="0,0,0,30" 
-                           HorizontalAlignment="Center"
-                           Foreground="#7F8C8D"
-                           TextWrapping="Wrap"
-                           TextAlignment="Center"
-                           MaxWidth="350"/>
-
-                <Button x:Name="BtnToggleLogging" 
-                        Content="Start Monitoring" 
-                        Width="180" Height="55"
-                        Click="BtnToggleLogging_Click"
-                        Background="#27AE60" 
-                        Foreground="White" 
-                        FontSize="16" 
-                        FontWeight="SemiBold"
-                        Cursor="Hand"
-                        BorderThickness="0"
-                        Margin="0,0,0,20">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="6"/>
-                        </Style>
-                    </Button.Resources>
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="6"
-                                                BorderThickness="0">
-                                            <ContentPresenter HorizontalAlignment="Center" 
-                                                              VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Opacity" Value="0.9"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-
-                <Button Content="View Application Data" 
-                        Width="180" Height="40"
-                        Click="ViewData_Click"
-                        Background="#3498DB" 
-                        Foreground="White" 
-                        FontSize="14"
-                        Cursor="Hand"
-                        BorderThickness="0">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="6"
-                                                BorderThickness="0">
-                                            <ContentPresenter HorizontalAlignment="Center" 
-                                                              VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Opacity" Value="0.9"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
+            <!-- Header Section -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                <Image Source="pack://application:,,,/Resources/app_icon.ico" 
+                       Width="32" Height="32" 
+                       Margin="0,0,10,0"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       Stretch="Uniform"/>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Application Monitor" 
+                               FontSize="16" 
+                               FontWeight="SemiBold"
+                               Foreground="#1F1F1F"/>
+                    <TextBlock Text="Track which applications you use and for how long" 
+                               FontSize="11" 
+                               Foreground="#606060"
+                               Margin="0,2,0,0"/>
+                </StackPanel>
             </StackPanel>
+
+            <!-- Control Section -->
+            <GroupBox Grid.Row="1" Header="Monitoring" Padding="10" Margin="0,0,0,12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Text="Monitor application usage by tracking when applications start and stop."
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="#404040"
+                               Margin="0,0,0,10"/>
+
+                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                        <Button x:Name="BtnStart" 
+                                Content="Start" 
+                                Width="90" 
+                                Height="28"
+                                Margin="0,0,8,0"
+                                Click="BtnStart_Click"
+                                FontSize="11"/>
+
+                        <Button x:Name="BtnStop" 
+                                Content="Stop" 
+                                Width="90" 
+                                Height="28"
+                                Click="BtnStop_Click"
+                                IsEnabled="False"
+                                FontSize="11"/>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+
+            <!-- Current Activity Section -->
+            <GroupBox Grid.Row="2" Header="Current Activity" Padding="10">
+                <Grid>
+                    <TextBlock x:Name="CurrentActivityText"
+                               Text="No applications being monitored."
+                               FontSize="11"
+                               Foreground="#606060"
+                               VerticalAlignment="Top"
+                               TextWrapping="Wrap"/>
+                </Grid>
+            </GroupBox>
+
         </Grid>
     </DockPanel>
 </Window>

@@ -3,6 +3,7 @@ using ClockbusterApps.Views;
 using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace ClockbusterApps
 {
@@ -10,42 +11,79 @@ namespace ClockbusterApps
     {
         private readonly TimingService _timingService;
         private bool _isLogging;
+        private DispatcherTimer _updateTimer;
+        private TimeclockViewerWindow _viewerWindow;
 
         public MainWindow()
         {
             InitializeComponent();
             _timingService = new TimingService();
+
+            // Timer to update current activity display
+            _updateTimer = new DispatcherTimer();
+            _updateTimer.Interval = TimeSpan.FromSeconds(2);
+            _updateTimer.Tick += UpdateCurrentActivity;
         }
 
-        private void BtnToggleLogging_Click(object sender, RoutedEventArgs e)
+        private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
-            if (!_isLogging)
-            {
-                _timingService.Start();
+            _timingService.Start();
 
-                BtnToggleLogging.Content = "Stop Monitoring";
-                BtnToggleLogging.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C"));
-                StatusText.Text = "Monitoring";
-                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#27AE60"));
-                _isLogging = true;
+            BtnStart.IsEnabled = false;
+            BtnStop.IsEnabled = true;
+
+            StatusText.Text = "Monitoring";
+            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#107C10")); // ADD THIS - Windows green
+            _isLogging = true;
+
+            _updateTimer.Start();
+            UpdateCurrentActivity(null, null);
+        }
+
+        private void BtnStop_Click(object sender, RoutedEventArgs e)
+        {
+            _timingService.Stop();
+
+            BtnStart.IsEnabled = true;
+            BtnStop.IsEnabled = false;
+
+            StatusText.Text = "Idle";
+            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#606060"));
+            _isLogging = false;
+
+            _updateTimer.Stop();
+            CurrentActivityText.Text = "No applications being monitored.";
+        }
+
+        private void UpdateCurrentActivity(object sender, EventArgs e)
+        {
+            var currentSession = _timingService.GetCurrentSession();
+            if (currentSession != null)
+            {
+                CurrentActivityText.Text = string.Format(
+                    "Currently tracking: {0}\nDuration: {1} minutes",
+                    currentSession.ApplicationName,
+                    ((int)currentSession.DurationMinutes).ToString());
             }
             else
             {
-                _timingService.Stop();
-
-                BtnToggleLogging.Content = "Start Monitoring";
-                BtnToggleLogging.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#27AE60"));
-                StatusText.Text = "Idle";
-                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#7F8C8D"));
-                _isLogging = false;
+                CurrentActivityText.Text = "Monitoring active - waiting for application focus...";
             }
         }
 
         private void ViewData_Click(object sender, RoutedEventArgs e)
         {
-            var viewer = new TimeclockViewerWindow(_timingService);
-            viewer.Owner = this;
-            viewer.Show();
+            if (_viewerWindow != null && _viewerWindow.IsLoaded)
+            {
+                _viewerWindow.Activate();
+                _viewerWindow.Focus();
+                return;
+            }
+
+            _viewerWindow = new TimeclockViewerWindow(_timingService);
+            _viewerWindow.Owner = this;
+            _viewerWindow.Closed += (s, args) => _viewerWindow = null;
+            _viewerWindow.Show();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)

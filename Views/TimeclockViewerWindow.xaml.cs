@@ -50,7 +50,7 @@ namespace ClockbusterApps.Views
                         ApplicationName = session.ApplicationName,
                         StartTimeStr = session.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
                         EndTimeStr = "In Progress", // ADD THIS to show it's active
-                        DurationMinutes = session.DurationMinutes.ToString("F2")
+                        DurationMinutes = session.DurationMinutes.ToString("F0")
                     });
                 }
 
