@@ -221,7 +221,8 @@ namespace ClockbusterApps.Services
                 "systemsettings", "lockapp", "sihost", "fontdrvhost",
                 "conhost", "backgroundtaskhost", "securityhealthsystray",
                 "textinputhost", "idle", "system", "livepreviewsurface", "nahimic", "githubdesktop",
-                "discord", "steam", "epicgameslauncher"
+                "discord", "steam", "epicgameslauncher", "devenv", "setup", "steamwebhelper", "clockbusterApps",
+                "RazerAppEngine", "vksts"
             };
 
             return systemProcesses.Contains(processName);
