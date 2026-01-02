@@ -7,6 +7,8 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="White" BorderBrush="#E5E5E5" BorderThickness="0,0,0,1">
             <MenuItem Header="File">
+                <MenuItem Header="Options..." Click="Options_Click" />
+                <Separator />
                 <MenuItem Header="Exit" Click="Exit_Click" />
             </MenuItem>
             <MenuItem Header="View">

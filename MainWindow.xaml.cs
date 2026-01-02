@@ -13,11 +13,13 @@ namespace ClockbusterApps
         private bool _isLogging;
         private DispatcherTimer _updateTimer;
         private TimeclockViewerWindow _viewerWindow;
+        private AppSettings _settings;
 
         public MainWindow()
         {
             InitializeComponent();
             _timingService = new TimingService();
+            _settings = AppSettings.Load();
 
             // Timer to update current activity display
             _updateTimer = new DispatcherTimer();
@@ -27,13 +29,13 @@ namespace ClockbusterApps
 
         private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
-            _timingService.Start();
+            _timingService.Start(_settings.TrackExistingApplications);
 
             BtnStart.IsEnabled = false;
             BtnStop.IsEnabled = true;
 
             StatusText.Text = "Monitoring";
-            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#107C10")); // ADD THIS - Windows green
+            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#107C10"));
             _isLogging = true;
 
             _updateTimer.Start();
@@ -68,6 +70,18 @@ namespace ClockbusterApps
             else
             {
                 CurrentActivityText.Text = "Monitoring active - waiting for application focus...";
+            }
+        }
+
+        private void Options_Click(object sender, RoutedEventArgs e)
+        {
+            var optionsWindow = new OptionsWindow(_settings.TrackExistingApplications);
+            optionsWindow.Owner = this;
+
+            if (optionsWindow.ShowDialog() == true)
+            {
+                _settings.TrackExistingApplications = optionsWindow.TrackExistingApplications;
+                _settings.Save();
             }
         }
 

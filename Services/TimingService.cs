@@ -73,12 +73,12 @@ namespace ClockbusterApps.Services
             return _runningSessions.Values.ToList().AsReadOnly();
         }
 
-        public void Start()
+        public void Start(bool trackExistingApplications = false)
         {
             if (_timer != null) return;
 
             // Initialize with currently running processes
-            InitializeRunningProcesses();
+            InitializeRunningProcesses(trackExistingApplications);
 
             _timer = new System.Timers.Timer(2000); // Check every 2 seconds
             _timer.Elapsed += OnTimerElapsed;
@@ -104,7 +104,7 @@ namespace ClockbusterApps.Services
             _knownProcessIds.Clear();
         }
 
-        private void InitializeRunningProcesses()
+        private void InitializeRunningProcesses(bool createSessions)
         {
             try
             {
@@ -113,9 +113,27 @@ namespace ClockbusterApps.Services
                 {
                     try
                     {
-                        if (!IsSystemProcess(process.ProcessName))
+                        int pid = process.Id;
+
+                        if (IsSystemProcess(process.ProcessName))
+                            continue;
+
+                        // Always add to known PIDs
+                        _knownProcessIds.Add(pid);
+
+                        // Only create sessions if option is enabled and process has a main window
+                        if (createSessions && process.MainWindowHandle != IntPtr.Zero)
                         {
-                            _knownProcessIds.Add(process.Id);
+                            var newSession = new Session
+                            {
+                                Id = Guid.NewGuid().ToString("N").Substring(0, 8) + "-" + Guid.NewGuid().ToString("N").Substring(0, 4),
+                                ApplicationName = process.ProcessName,
+                                StartTime = DateTime.Now,
+                                EndTime = null,
+                                ProcessId = pid
+                            };
+
+                            _runningSessions[pid] = newSession;
                         }
                     }
                     catch { }
