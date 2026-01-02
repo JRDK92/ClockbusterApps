@@ -3,21 +3,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading; // ADD THIS
+using ClockbusterApps.Services; // ADD THIS
 
 namespace ClockbusterApps.Views
 {
     public partial class TimeclockViewerWindow : Window
     {
         private readonly string _logFilePath;
+        private readonly TimingService _timingService; // ADD THIS
+        private DispatcherTimer _refreshTimer; // ADD THIS
 
-        public TimeclockViewerWindow()
+        // CHANGE THE CONSTRUCTOR to accept TimingService
+        public TimeclockViewerWindow(TimingService timingService)
         {
             InitializeComponent();
+            _timingService = timingService; // ADD THIS
             _logFilePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "ClockbusterApps",
                 "timeclock.log"
             );
+
+            // ADD THIS: Auto-refresh every 2 seconds to show live updates
+            _refreshTimer = new DispatcherTimer();
+            _refreshTimer.Interval = TimeSpan.FromSeconds(2);
+            _refreshTimer.Tick += (s, e) => LoadData();
+            _refreshTimer.Start();
+
             LoadData();
         }
 
@@ -25,47 +38,70 @@ namespace ClockbusterApps.Views
         {
             try
             {
-                if (!File.Exists(_logFilePath))
+                var sessions = new List<SessionViewModel>();
+
+                // ADD THIS: Get active sessions first
+                var activeSessions = _timingService.GetActiveSessions();
+                foreach (var session in activeSessions)
                 {
-                    StatusTextViewer.Text = "No session logs found.";
-                    DataGridLogs.ItemsSource = null;
-                    return;
+                    sessions.Add(new SessionViewModel
+                    {
+                        Id = session.Id,
+                        ApplicationName = session.ApplicationName,
+                        StartTimeStr = session.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        EndTimeStr = "In Progress", // ADD THIS to show it's active
+                        DurationMinutes = session.DurationMinutes.ToString("F2")
+                    });
                 }
 
-                var sessions = new List<SessionViewModel>();
-                var lines = File.ReadAllLines(_logFilePath);
-
-                foreach (var line in lines)
+                // EXISTING CODE: Get completed sessions from log
+                if (File.Exists(_logFilePath))
                 {
-                    if (string.IsNullOrWhiteSpace(line))
-                        continue;
+                    var lines = File.ReadAllLines(_logFilePath);
 
-                    // Requirement 5: Format parsing: SessionID|AppName|Start|End|Duration
-                    var parts = line.Split('|');
-                    if (parts.Length >= 5)
+                    foreach (var line in lines)
                     {
-                        sessions.Add(new SessionViewModel
+                        if (string.IsNullOrWhiteSpace(line))
+                            continue;
+
+                        var parts = line.Split('|');
+                        if (parts.Length >= 5)
                         {
-                            Id = parts[0],
-                            ApplicationName = parts[1],
-                            StartTimeStr = parts[2],
-                            EndTimeStr = parts[3],
-                            DurationMinutes = parts[4]
-                        });
+                            sessions.Add(new SessionViewModel
+                            {
+                                Id = parts[0],
+                                ApplicationName = parts[1],
+                                StartTimeStr = parts[2],
+                                EndTimeStr = parts[3],
+                                DurationMinutes = parts[4]
+                            });
+                        }
                     }
                 }
 
-                // Requirement 4: Sort by most recent first
-                sessions.Reverse();
+                // Sort by start time - most recent first (active sessions will be on top)
+                sessions = sessions.OrderByDescending(s => s.StartTimeStr).ToList();
 
                 DataGridLogs.ItemsSource = sessions;
-                StatusTextViewer.Text = string.Format("Loaded {0} completed sessions.", sessions.Count);
+
+                // UPDATE STATUS MESSAGE
+                var activeCount = activeSessions.Count();
+                var completedCount = sessions.Count - activeCount;
+                StatusTextViewer.Text = string.Format("{0} active, {1} completed sessions.",
+                    activeCount, completedCount);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading data: " + ex.Message, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        // ADD THIS: Stop the timer when window closes
+        protected override void OnClosed(EventArgs e)
+        {
+            _refreshTimer?.Stop();
+            base.OnClosed(e);
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)

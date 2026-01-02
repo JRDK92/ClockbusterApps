@@ -68,6 +68,11 @@ namespace ClockbusterApps.Services
             return null;
         }
 
+        public IReadOnlyCollection<Session> GetActiveSessions()
+        {
+            return _runningSessions.Values.ToList().AsReadOnly();
+        }
+
         public void Start()
         {
             if (_timer != null) return;
@@ -136,6 +141,9 @@ namespace ClockbusterApps.Services
 
                         // Skip system processes
                         if (IsSystemProcess(process.ProcessName))
+                            continue;
+                        // Only track processes with a main window
+                        if (process.MainWindowHandle == IntPtr.Zero)
                             continue;
 
                         // NEW process detected!

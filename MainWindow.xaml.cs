@@ -43,7 +43,7 @@ namespace ClockbusterApps
 
         private void ViewData_Click(object sender, RoutedEventArgs e)
         {
-            var viewer = new TimeclockViewerWindow();
+            var viewer = new TimeclockViewerWindow(_timingService);
             viewer.Owner = this;
             viewer.Show();
         }

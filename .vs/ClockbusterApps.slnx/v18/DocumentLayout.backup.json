@@ -1,18 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\",
+  "WorkspaceRootPath": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|c:\\users\\josep\\documents\\github\\clockbusterapps\\services\\timingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|solutionrelative:services\\timingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|c:\\users\\josep\\documents\\github\\clockbusterapps\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|c:\\users\\josep\\source\\repos\\clockbusterapps\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|c:\\users\\josep\\documents\\github\\clockbusterapps\\services\\foregroundwindowservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|solutionrelative:services\\foregroundwindowservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|c:\\users\\josep\\source\\repos\\clockbusterapps\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|c:\\users\\josep\\source\\repos\\clockbusterapps\\views\\timeclockviewerwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|solutionrelative:views\\timeclockviewerwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|c:\\users\\josep\\source\\repos\\clockbusterapps\\services\\timingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7114459C-05F5-6384-425A-8CBA206FBFA6}|ClockbusterApps.csproj|solutionrelative:services\\timingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,43 +26,55 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\MainWindow.xaml.cs",
               "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAiwBgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAAC0AAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-01T20:56:42.542Z",
+              "WhenOpened": "2026-01-01T23:59:19.845Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "MainWindow.xaml",
+              "ToolTip": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\MainWindow.xaml",
+              "RelativeToolTip": "MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-01-01T23:59:17.214Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ForegroundWindowService.cs",
-              "DocumentMoniker": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\Services\\ForegroundWindowService.cs",
-              "RelativeDocumentMoniker": "Services\\ForegroundWindowService.cs",
-              "ToolTip": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\Services\\ForegroundWindowService.cs",
-              "RelativeToolTip": "Services\\ForegroundWindowService.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAA3wEoAAAABAAAAAAAAAA==",
+              "Title": "TimeclockViewerWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\Views\\TimeclockViewerWindow.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\TimeclockViewerWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\Views\\TimeclockViewerWindow.xaml.cs",
+              "RelativeToolTip": "Views\\TimeclockViewerWindow.xaml.cs",
+              "ViewState": "AgIAAFkAAAAAAAAAAAAAAG0AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-01T20:58:21.174Z",
+              "WhenOpened": "2026-01-01T23:55:53.489Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "TimingService.cs",
-              "DocumentMoniker": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\Services\\TimingService.cs",
+              "DocumentMoniker": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\Services\\TimingService.cs",
               "RelativeDocumentMoniker": "Services\\TimingService.cs",
-              "ToolTip": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\Services\\TimingService.cs",
+              "ToolTip": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\Services\\TimingService.cs",
               "RelativeToolTip": "Services\\TimingService.cs",
-              "ViewState": "AgIAALgAAAAAAAAAAAAqwN4AAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAACQAAAAAAAAAAAAqwEoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-01T20:56:24.263Z",
               "EditorCaption": ""

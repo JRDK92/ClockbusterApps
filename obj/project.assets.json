@@ -345,11 +345,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\ClockbusterApps.csproj",
+      "projectUniqueName": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\ClockbusterApps.csproj",
       "projectName": "ClockbusterApps",
-      "projectPath": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\ClockbusterApps.csproj",
+      "projectPath": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\ClockbusterApps.csproj",
       "packagesPath": "C:\\Users\\josep\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\obj\\",
+      "outputPath": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\josep\\AppData\\Roaming\\NuGet\\NuGet.Config",
