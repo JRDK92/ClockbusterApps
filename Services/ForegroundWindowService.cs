@@ -26,7 +26,7 @@ namespace ClockbusterApps.Services
             "shellexperiencehost", "runtimebroker", "applicationframehost",
             "systemsettings", "lockapp", "sihost", "fontdrvhost",
             "conhost", "backgroundtaskhost", "securityhealthsystray",
-            "textinputhost"
+            "textinputhost", "EAAntiCheat.GameServiceLauncher", "SnippingTool"
         };
 
         public class ForegroundAppInfo

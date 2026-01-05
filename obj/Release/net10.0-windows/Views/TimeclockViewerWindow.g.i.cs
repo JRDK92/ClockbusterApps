@@ -68,7 +68,7 @@ namespace ClockbusterApps.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/ClockbusterApps;component/views/timeclockviewerwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/ClockbusterApps;V1.0.0.0;component/views/timeclockviewerwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\TimeclockViewerWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

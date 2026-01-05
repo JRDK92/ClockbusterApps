@@ -555,19 +555,19 @@
   },
   "packageFolders": {
     "C:\\Users\\josep\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "D:\\Programming\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\ClockbusterApps.csproj",
+      "projectUniqueName": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\ClockbusterApps.csproj",
       "projectName": "ClockbusterApps",
-      "projectPath": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\ClockbusterApps.csproj",
+      "projectPath": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\ClockbusterApps.csproj",
       "packagesPath": "C:\\Users\\josep\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\josep\\Documents\\GitHub\\ClockbusterApps\\obj\\publish\\win-x64\\",
+      "outputPath": "C:\\Users\\josep\\source\\repos\\ClockbusterApps\\obj\\publish\\win-x64\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "D:\\Programming\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
         "C:\\Users\\josep\\AppData\\Roaming\\NuGet\\NuGet.Config",
