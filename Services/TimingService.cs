@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Timers;
 
 namespace ClockbusterApps.Services
 {
-    // Session class remains unchanged
     public class Session
     {
         public string Id { get; set; } = Guid.NewGuid().ToString().Substring(0, 8) + "-" + Guid.NewGuid().ToString().Substring(0, 4);
@@ -29,34 +27,20 @@ namespace ClockbusterApps.Services
     public class TimingService
     {
         private System.Timers.Timer _timer;
-        private readonly string _logFilePath;
+        private readonly DatabaseService _databaseService;
         private Dictionary<int, Session> _runningSessions = new Dictionary<int, Session>();
         private HashSet<int> _knownProcessIds = new HashSet<int>();
-
-        // New: Store user-defined ignored processes
         private HashSet<string> _userIgnoredProcesses = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public TimingService()
+        public TimingService(DatabaseService databaseService)
         {
-            _logFilePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "ClockbusterApps",
-                "timeclock.log"
-            );
-
-            var directory = Path.GetDirectoryName(_logFilePath);
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+            _databaseService = databaseService;
         }
 
-        // Requirement 4 & 5: Update ignore list and stop tracking newly ignored apps
         public void UpdateIgnoredProcesses(List<string> ignoredList)
         {
             _userIgnoredProcesses = new HashSet<string>(ignoredList, StringComparer.OrdinalIgnoreCase);
 
-            // Immediately stop tracking any currently running sessions that are now on the ignore list
             var sessionsToKill = _runningSessions.Values
                 .Where(s => _userIgnoredProcesses.Contains(s.ApplicationName))
                 .ToList();
@@ -76,7 +60,7 @@ namespace ClockbusterApps.Services
             {
                 var appInfo = ForegroundWindowService.GetForegroundApplicationInfo();
                 if (appInfo != null &&
-                    !IsSystemProcess(appInfo.ProcessName) && // Added check here
+                    !IsSystemProcess(appInfo.ProcessName) &&
                     _runningSessions.ContainsKey(appInfo.ProcessId))
                 {
                     return _runningSessions[appInfo.ProcessId];
@@ -203,7 +187,6 @@ namespace ClockbusterApps.Services
         {
             if (string.IsNullOrEmpty(processName)) return true;
 
-            // Requirement 4: Check user ignored list first
             if (_userIgnoredProcesses.Contains(processName)) return true;
 
             var systemProcesses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -224,16 +207,16 @@ namespace ClockbusterApps.Services
 
         private void LogSession(Session session)
         {
-            var line = string.Format("{0}|{1}|{2}|{3}|{4:F2}",
-                session.Id,
-                session.ApplicationName,
-                session.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                session.EndTime.Value.ToString("yyyy-MM-dd HH:mm:ss"),
-                session.DurationMinutes);
-
             try
             {
-                File.AppendAllText(_logFilePath, line + Environment.NewLine);
+                _databaseService.InsertSession(
+                    session.Id,
+                    session.ApplicationName,
+                    session.StartTime,
+                    session.EndTime,
+                    session.DurationMinutes,
+                    false
+                );
             }
             catch { }
         }

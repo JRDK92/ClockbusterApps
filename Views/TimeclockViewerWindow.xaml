@@ -6,23 +6,14 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1" Padding="15">
-            <StackPanel>
-                <TextBlock Text="Session History" FontSize="18" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="Refresh" Click="Refresh_Click" Width="100" Height="32" Margin="0,0,10,0" Background="#3498DB" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-                    <Button Content="Clear All" Click="ClearAll_Click" Width="100" Height="32" Background="#E74C3C" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-
-        <DataGrid Grid.Row="1" 
+        <DataGrid Grid.Row="0" 
                   x:Name="DataGridLogs"
+                  SelectionMode="Extended"
+                  SelectionChanged="DataGridLogs_SelectionChanged"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   Margin="15"
@@ -36,6 +27,8 @@
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Add application to ignore list" Click="CtxAddToIgnore_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Delete Selected" Click="DeleteSelected_Click"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
 
@@ -57,12 +50,27 @@
                     <Setter Property="BorderBrush" Value="#DEE2E6"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
+
+            <DataGrid.InputBindings>
+                <KeyBinding Key="A" Modifiers="Control" Command="{Binding SelectAllCommand}"/>
+            </DataGrid.InputBindings>
         </DataGrid>
 
-        <StatusBar Grid.Row="2" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="0,1,0,0">
+        <StatusBar Grid.Row="1" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="0,1,0,0">
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="StatusTextViewer" Text="Ready" FontSize="13"/>
+                    <Button Content="Refresh" Click="Refresh_Click" Width="100" Height="32" Margin="0,0,10,0" Background="#3498DB" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+
+                    <Button x:Name="BtnDelete" 
+                        Content="Delete All" 
+                        Click="Delete_Click" 
+                        Width="150" Height="32" 
+                        Background="#E74C3C" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+
+                    <TextBlock x:Name="StatusTextViewer" 
+                               VerticalAlignment="Center" 
+                               Margin="15,0,0,0" 
+                               Foreground="#2C3E50"/>
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>

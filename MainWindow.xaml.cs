@@ -11,6 +11,7 @@ namespace ClockbusterApps
     public partial class MainWindow : Window
     {
         private readonly TimingService _timingService;
+        private readonly DatabaseService _databaseService;
         private bool _isLogging;
         private DispatcherTimer _updateTimer;
         private TimeclockViewerWindow _viewerWindow;
@@ -21,8 +22,11 @@ namespace ClockbusterApps
             InitializeComponent();
             _settings = AppSettings.Load();
 
-            _timingService = new TimingService();
-            // Requirement 4: Ensure timing service knows about ignored apps on startup
+            // Initialize database service first
+            _databaseService = new DatabaseService();
+
+            // Pass database service to timing service
+            _timingService = new TimingService(_databaseService);
             _timingService.UpdateIgnoredProcesses(_settings.IgnoredProcesses);
 
             // Timer to update current activity display
@@ -79,7 +83,6 @@ namespace ClockbusterApps
 
         private void Options_Click(object sender, RoutedEventArgs e)
         {
-            // Pass the list to the window
             var optionsWindow = new OptionsWindow(
                 _settings.TrackExistingApplications,
                 _settings.IgnoredProcesses);
@@ -89,12 +92,9 @@ namespace ClockbusterApps
             if (optionsWindow.ShowDialog() == true)
             {
                 _settings.TrackExistingApplications = optionsWindow.TrackExistingApplications;
-
-                // Update settings with result from window
                 _settings.IgnoredProcesses = optionsWindow.IgnoredProcesses.ToList();
                 _settings.Save();
 
-                // Requirement 5: Update service immediately
                 _timingService.UpdateIgnoredProcesses(_settings.IgnoredProcesses);
             }
         }
@@ -108,7 +108,7 @@ namespace ClockbusterApps
                 return;
             }
 
-            _viewerWindow = new TimeclockViewerWindow(_timingService, _settings);
+            _viewerWindow = new TimeclockViewerWindow(_timingService, _settings, _databaseService);
             _viewerWindow.Owner = this;
             _viewerWindow.Closed += (s, args) => _viewerWindow = null;
             _viewerWindow.Show();
