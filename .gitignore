@@ -64,3 +64,5 @@ desktop.ini
 # Ignore all Visual Studio publish profiles
 *.pubxml
 *.pubxml.user
+*.slnx
+*.slnx
