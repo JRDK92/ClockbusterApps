@@ -108,7 +108,7 @@ namespace ClockbusterApps
                 return;
             }
 
-            _viewerWindow = new TimeclockViewerWindow(_timingService);
+            _viewerWindow = new TimeclockViewerWindow(_timingService, _settings);
             _viewerWindow.Owner = this;
             _viewerWindow.Closed += (s, args) => _viewerWindow = null;
             _viewerWindow.Show();

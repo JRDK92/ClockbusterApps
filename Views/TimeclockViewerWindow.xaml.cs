@@ -3,35 +3,72 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Threading; // ADD THIS
-using ClockbusterApps.Services; // ADD THIS
+using System.Windows.Threading;
+using ClockbusterApps.Services;
 
 namespace ClockbusterApps.Views
 {
     public partial class TimeclockViewerWindow : Window
     {
         private readonly string _logFilePath;
-        private readonly TimingService _timingService; // ADD THIS
-        private DispatcherTimer _refreshTimer; // ADD THIS
+        private readonly TimingService _timingService;
+        private readonly AppSettings _settings;
+        private DispatcherTimer _refreshTimer;
 
-        // CHANGE THE CONSTRUCTOR to accept TimingService
-        public TimeclockViewerWindow(TimingService timingService)
+        public TimeclockViewerWindow(TimingService timingService, AppSettings settings)
         {
             InitializeComponent();
-            _timingService = timingService; // ADD THIS
+            _timingService = timingService;
+            _settings = settings;
+
             _logFilePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "ClockbusterApps",
                 "timeclock.log"
             );
 
-            // ADD THIS: Auto-refresh every 2 seconds to show live updates
             _refreshTimer = new DispatcherTimer();
-            _refreshTimer.Interval = TimeSpan.FromSeconds(2);
-            _refreshTimer.Tick += (s, e) => LoadData();
+            /* 2 second refresh */
+            _refreshTimer.Interval = TimeSpan.FromSeconds(60);
+
+            /* only refresh if the application is currently monitoring */
+            _refreshTimer.Tick += (s, e) =>
+            {
+                if (_timingService.GetActiveSessions().Any())
+                {
+                    LoadData();
+                }
+            };
             _refreshTimer.Start();
 
             LoadData();
+        }
+
+        private void CtxAddToIgnore_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataGridLogs.SelectedItem is SessionViewModel selectedSession)
+            {
+                string appName = selectedSession.ApplicationName;
+
+                if (!_settings.IgnoredProcesses.Contains(appName))
+                {
+                    var result = MessageBox.Show(
+                        $"Are you sure you want to ignore '{appName}'?\n\nThis will stop tracking it immediately.",
+                        "Confirm Ignore",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        _settings.IgnoredProcesses.Add(appName);
+                        _settings.Save();
+                        _timingService.UpdateIgnoredProcesses(_settings.IgnoredProcesses);
+
+                        StatusTextViewer.Text = $"'{appName}' added to ignore list.";
+                        LoadData();
+                    }
+                }
+            }
         }
 
         private void LoadData()
@@ -40,30 +77,26 @@ namespace ClockbusterApps.Views
             {
                 var sessions = new List<SessionViewModel>();
 
-                // ADD THIS: Get active sessions first
+                // Get active sessions
                 var activeSessions = _timingService.GetActiveSessions();
-                foreach (var session in activeSessions)
+                foreach (var s in activeSessions)
                 {
                     sessions.Add(new SessionViewModel
                     {
-                        Id = session.Id,
-                        ApplicationName = session.ApplicationName,
-                        StartTimeStr = session.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                        EndTimeStr = "In Progress", // ADD THIS to show it's active
-                        DurationMinutes = session.DurationMinutes.ToString("F0")
+                        Id = s.Id,
+                        ApplicationName = s.ApplicationName,
+                        StartTimeStr = s.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        EndTimeStr = "ACTIVE",
+                        DurationMinutes = ((int)s.DurationMinutes).ToString()
                     });
                 }
 
-                // EXISTING CODE: Get completed sessions from log
+                // Load from file
                 if (File.Exists(_logFilePath))
                 {
                     var lines = File.ReadAllLines(_logFilePath);
-
-                    foreach (var line in lines)
+                    foreach (var line in lines.Reverse())
                     {
-                        if (string.IsNullOrWhiteSpace(line))
-                            continue;
-
                         var parts = line.Split('|');
                         if (parts.Length >= 5)
                         {
@@ -79,64 +112,32 @@ namespace ClockbusterApps.Views
                     }
                 }
 
-                // Sort by start time - most recent first (active sessions will be on top)
-                sessions = sessions.OrderByDescending(s => s.StartTimeStr).ToList();
-
                 DataGridLogs.ItemsSource = sessions;
-
-                // UPDATE STATUS MESSAGE
-                var activeCount = activeSessions.Count();
-                var completedCount = sessions.Count - activeCount;
-                StatusTextViewer.Text = string.Format("{0} active, {1} completed sessions.",
-                    activeCount, completedCount);
+                StatusTextViewer.Text = $"Loaded {sessions.Count} sessions.";
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading data: " + ex.Message, "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                StatusTextViewer.Text = "Error loading data: " + ex.Message;
             }
         }
 
-        // ADD THIS: Stop the timer when window closes
         protected override void OnClosed(EventArgs e)
         {
-            _refreshTimer?.Stop();
+            _refreshTimer.Stop();
             base.OnClosed(e);
         }
 
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-            LoadData();
-        }
+        private void Refresh_Click(object sender, RoutedEventArgs e) => LoadData();
 
         private void ClearAll_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
-                "Are you sure you want to delete all session history?",
-                "Confirm Delete",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            if (result == MessageBoxResult.Yes)
+            if (MessageBox.Show("Delete all history?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                try
-                {
-                    if (File.Exists(_logFilePath))
-                    {
-                        File.Delete(_logFilePath);
-                        StatusTextViewer.Text = "All data cleared successfully.";
-                    }
-                    LoadData();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error deleting log: " + ex.Message, "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                if (File.Exists(_logFilePath)) File.Delete(_logFilePath);
+                LoadData();
             }
         }
 
-        // View Model for the DataGrid
         public class SessionViewModel
         {
             public string Id { get; set; }

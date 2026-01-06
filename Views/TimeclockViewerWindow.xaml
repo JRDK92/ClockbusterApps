@@ -13,59 +13,10 @@
 
         <Border Grid.Row="0" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1" Padding="15">
             <StackPanel>
-                <TextBlock Text="Session History" 
-                           FontSize="18" 
-                           FontWeight="Bold" 
-                           Foreground="#2C3E50"
-                           Margin="0,0,0,10"/>
-
+                <TextBlock Text="Session History" FontSize="18" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Refresh" 
-                            Click="Refresh_Click" 
-                            Width="100" 
-                            Height="32"
-                            Margin="0,0,10,0"
-                            Background="#3498DB"
-                            Foreground="White"
-                            BorderThickness="0"
-                            Cursor="Hand">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}" CornerRadius="4">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-
-                    <Button Content="Clear All Data" 
-                            Click="ClearAll_Click" 
-                            Width="120"
-                            Height="32"
-                            Background="#E74C3C"
-                            Foreground="White"
-                            BorderThickness="0"
-                            Cursor="Hand">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}" CornerRadius="4">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                    </Button>
+                    <Button Content="Refresh" Click="Refresh_Click" Width="100" Height="32" Margin="0,0,10,0" Background="#3498DB" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <Button Content="Clear All" Click="ClearAll_Click" Width="100" Height="32" Background="#E74C3C" Foreground="White" BorderThickness="0" Cursor="Hand"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -81,6 +32,13 @@
                   RowHeight="32"
                   CanUserSortColumns="True"
                   FontSize="13">
+
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add application to ignore list" Click="CtxAddToIgnore_Click"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Session ID" Binding="{Binding Id}" Width="110"/>
                 <DataGridTextColumn Header="Application" Binding="{Binding ApplicationName}" Width="*" MinWidth="150" FontWeight="SemiBold"/>
@@ -88,6 +46,7 @@
                 <DataGridTextColumn Header="End Time" Binding="{Binding EndTimeStr}" Width="150"/>
                 <DataGridTextColumn Header="Duration (Min)" Binding="{Binding DurationMinutes}" Width="120"/>
             </DataGrid.Columns>
+
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="Background" Value="#E9ECEF"/>
