@@ -7,7 +7,7 @@ using System.Timers;
 
 namespace ClockbusterApps.Services
 {
-    // 1. Session Model (Requirement 1)
+    // Session class remains unchanged
     public class Session
     {
         public string Id { get; set; } = Guid.NewGuid().ToString().Substring(0, 8) + "-" + Guid.NewGuid().ToString().Substring(0, 4);
@@ -30,12 +30,11 @@ namespace ClockbusterApps.Services
     {
         private System.Timers.Timer _timer;
         private readonly string _logFilePath;
-
-        // Track all running applications by ProcessId
         private Dictionary<int, Session> _runningSessions = new Dictionary<int, Session>();
-
-        // Track which PIDs we've seen to detect new launches
         private HashSet<int> _knownProcessIds = new HashSet<int>();
+
+        // New: Store user-defined ignored processes
+        private HashSet<string> _userIgnoredProcesses = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public TimingService()
         {
@@ -52,19 +51,38 @@ namespace ClockbusterApps.Services
             }
         }
 
-        // Helper for UI to get the currently focused app's session
+        // Requirement 4 & 5: Update ignore list and stop tracking newly ignored apps
+        public void UpdateIgnoredProcesses(List<string> ignoredList)
+        {
+            _userIgnoredProcesses = new HashSet<string>(ignoredList, StringComparer.OrdinalIgnoreCase);
+
+            // Immediately stop tracking any currently running sessions that are now on the ignore list
+            var sessionsToKill = _runningSessions.Values
+                .Where(s => _userIgnoredProcesses.Contains(s.ApplicationName))
+                .ToList();
+
+            foreach (var session in sessionsToKill)
+            {
+                session.EndTime = DateTime.Now;
+                LogSession(session);
+                _runningSessions.Remove(session.ProcessId);
+                _knownProcessIds.Remove(session.ProcessId);
+            }
+        }
+
         public Session GetCurrentSession()
         {
             try
             {
                 var appInfo = ForegroundWindowService.GetForegroundApplicationInfo();
-                if (appInfo != null && !appInfo.IsSystemProcess && _runningSessions.ContainsKey(appInfo.ProcessId))
+                if (appInfo != null &&
+                    !IsSystemProcess(appInfo.ProcessName) && // Added check here
+                    _runningSessions.ContainsKey(appInfo.ProcessId))
                 {
                     return _runningSessions[appInfo.ProcessId];
                 }
             }
             catch { }
-
             return null;
         }
 
@@ -76,11 +94,8 @@ namespace ClockbusterApps.Services
         public void Start(bool trackExistingApplications = false)
         {
             if (_timer != null) return;
-
-            // Initialize with currently running processes
             InitializeRunningProcesses(trackExistingApplications);
-
-            _timer = new System.Timers.Timer(2000); // Check every 2 seconds
+            _timer = new System.Timers.Timer(2000);
             _timer.Elapsed += OnTimerElapsed;
             _timer.Start();
         }
@@ -88,15 +103,12 @@ namespace ClockbusterApps.Services
         public void Stop()
         {
             if (_timer == null) return;
-
-            // Close all active sessions
             var sessionsToClose = _runningSessions.Values.ToList();
             foreach (var session in sessionsToClose)
             {
                 session.EndTime = DateTime.Now;
                 LogSession(session);
             }
-
             _timer.Stop();
             _timer.Dispose();
             _timer = null;
@@ -114,14 +126,10 @@ namespace ClockbusterApps.Services
                     try
                     {
                         int pid = process.Id;
+                        if (IsSystemProcess(process.ProcessName)) continue;
 
-                        if (IsSystemProcess(process.ProcessName))
-                            continue;
-
-                        // Always add to known PIDs
                         _knownProcessIds.Add(pid);
 
-                        // Only create sessions if option is enabled and process has a main window
                         if (createSessions && process.MainWindowHandle != IntPtr.Zero)
                         {
                             var newSession = new Session
@@ -132,7 +140,6 @@ namespace ClockbusterApps.Services
                                 EndTime = null,
                                 ProcessId = pid
                             };
-
                             _runningSessions[pid] = newSession;
                         }
                     }
@@ -149,7 +156,6 @@ namespace ClockbusterApps.Services
                 var currentProcesses = Process.GetProcesses();
                 var currentPids = new HashSet<int>();
 
-                // Detect NEW processes (just launched)
                 foreach (var process in currentProcesses)
                 {
                     try
@@ -157,18 +163,12 @@ namespace ClockbusterApps.Services
                         int pid = process.Id;
                         currentPids.Add(pid);
 
-                        // Skip system processes
-                        if (IsSystemProcess(process.ProcessName))
-                            continue;
-                        // Only track processes with a main window
-                        if (process.MainWindowHandle == IntPtr.Zero)
-                            continue;
+                        if (IsSystemProcess(process.ProcessName)) continue;
+                        if (process.MainWindowHandle == IntPtr.Zero) continue;
 
-                        // NEW process detected!
                         if (!_knownProcessIds.Contains(pid))
                         {
                             _knownProcessIds.Add(pid);
-
                             var newSession = new Session
                             {
                                 Id = Guid.NewGuid().ToString("N").Substring(0, 8) + "-" + Guid.NewGuid().ToString("N").Substring(0, 4),
@@ -177,40 +177,34 @@ namespace ClockbusterApps.Services
                                 EndTime = null,
                                 ProcessId = pid
                             };
-
                             _runningSessions[pid] = newSession;
                         }
                     }
                     catch { }
                 }
 
-                // Detect CLOSED processes
                 var closedPids = _runningSessions.Keys.Where(pid => !currentPids.Contains(pid)).ToList();
                 foreach (var pid in closedPids)
                 {
                     var session = _runningSessions[pid];
                     session.EndTime = DateTime.Now;
-
-                    // Only log if session was at least 10 seconds
                     if ((session.EndTime.Value - session.StartTime).TotalSeconds >= 10)
                     {
                         LogSession(session);
                     }
-
                     _runningSessions.Remove(pid);
                     _knownProcessIds.Remove(pid);
                 }
             }
-            catch
-            {
-                // Silently handle errors
-            }
+            catch { }
         }
 
         private bool IsSystemProcess(string processName)
         {
-            if (string.IsNullOrEmpty(processName))
-                return true;
+            if (string.IsNullOrEmpty(processName)) return true;
+
+            // Requirement 4: Check user ignored list first
+            if (_userIgnoredProcesses.Contains(processName)) return true;
 
             var systemProcesses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -220,8 +214,8 @@ namespace ClockbusterApps.Services
                 "shellexperiencehost", "runtimebroker", "applicationframehost",
                 "systemsettings", "lockapp", "sihost", "fontdrvhost",
                 "conhost", "backgroundtaskhost", "securityhealthsystray",
-                "textinputhost", "idle", "system", "livepreviewsurface", "nahimic", "githubdesktop",
-                "discord", "steam", "epicgameslauncher", "devenv", "setup", "steamwebhelper", "clockbusterApps",
+                "textinputhost", "idle", "system", "livepreviewsurface", "nahimic",
+                "epicgameslauncher", "devenv", "setup", "steamwebhelper", "clockbusterApps",
                 "RazerAppEngine", "vksts"
             };
 
@@ -230,9 +224,6 @@ namespace ClockbusterApps.Services
 
         private void LogSession(Session session)
         {
-            // Requirement 5: Pipe-delimited format
-            // SessionID|ApplicationName|StartDateTime|EndDateTime|DurationInMinutes
-
             var line = string.Format("{0}|{1}|{2}|{3}|{4:F2}",
                 session.Id,
                 session.ApplicationName,
@@ -244,10 +235,7 @@ namespace ClockbusterApps.Services
             {
                 File.AppendAllText(_logFilePath, line + Environment.NewLine);
             }
-            catch
-            {
-                // File access retry logic could go here
-            }
+            catch { }
         }
     }
 }

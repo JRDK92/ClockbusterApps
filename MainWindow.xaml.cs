@@ -1,6 +1,7 @@
 ﻿using ClockbusterApps.Services;
 using ClockbusterApps.Views;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -18,8 +19,11 @@ namespace ClockbusterApps
         public MainWindow()
         {
             InitializeComponent();
-            _timingService = new TimingService();
             _settings = AppSettings.Load();
+
+            _timingService = new TimingService();
+            // Requirement 4: Ensure timing service knows about ignored apps on startup
+            _timingService.UpdateIgnoredProcesses(_settings.IgnoredProcesses);
 
             // Timer to update current activity display
             _updateTimer = new DispatcherTimer();
@@ -75,13 +79,23 @@ namespace ClockbusterApps
 
         private void Options_Click(object sender, RoutedEventArgs e)
         {
-            var optionsWindow = new OptionsWindow(_settings.TrackExistingApplications);
+            // Pass the list to the window
+            var optionsWindow = new OptionsWindow(
+                _settings.TrackExistingApplications,
+                _settings.IgnoredProcesses);
+
             optionsWindow.Owner = this;
 
             if (optionsWindow.ShowDialog() == true)
             {
                 _settings.TrackExistingApplications = optionsWindow.TrackExistingApplications;
+
+                // Update settings with result from window
+                _settings.IgnoredProcesses = optionsWindow.IgnoredProcesses.ToList();
                 _settings.Save();
+
+                // Requirement 5: Update service immediately
+                _timingService.UpdateIgnoredProcesses(_settings.IgnoredProcesses);
             }
         }
 

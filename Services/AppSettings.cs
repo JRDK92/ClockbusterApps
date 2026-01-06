@@ -1,61 +1,55 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Xml;
-using Formatting = Newtonsoft.Json.Formatting;
 
-namespace ClockbusterApps.Services
+namespace ClockbusterApps
 {
     public class AppSettings
     {
-        public bool TrackExistingApplications { get; set; } = false;
+        public bool TrackExistingApplications { get; set; }
 
-        private static readonly string _settingsFilePath;
-
-        static AppSettings()
-        {
-            _settingsFilePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "ClockbusterApps",
-                "settings.json"
-            );
-        }
+        // Requirement 3: Persist ignored list
+        public List<string> IgnoredProcesses { get; set; } = new List<string>();
 
         public static AppSettings Load()
         {
-            try
+            var path = GetSettingsPath();
+            if (File.Exists(path))
             {
-                if (File.Exists(_settingsFilePath))
+                try
                 {
-                    var json = File.ReadAllText(_settingsFilePath);
-                    return JsonConvert.DeserializeObject<AppSettings>(json) ?? new AppSettings();
+                    var json = File.ReadAllText(path);
+                    var settings = JsonConvert.DeserializeObject<AppSettings>(json);
+                    if (settings != null)
+                    {
+                        if (settings.IgnoredProcesses == null)
+                            settings.IgnoredProcesses = new List<string>();
+                        return settings;
+                    }
                 }
+                catch { }
             }
-            catch
-            {
-                // If loading fails, return default settings
-            }
-
             return new AppSettings();
         }
 
         public void Save()
         {
-            try
-            {
-                var directory = Path.GetDirectoryName(_settingsFilePath);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
+            var path = GetSettingsPath();
+            var directory = Path.GetDirectoryName(path);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
 
-                var json = JsonConvert.SerializeObject(this, Formatting.Indented);
-                File.WriteAllText(_settingsFilePath, json);
-            }
-            catch
-            {
-                // Silently handle save errors
-            }
+            var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            File.WriteAllText(path, json);
+        }
+
+        private static string GetSettingsPath()
+        {
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "ClockbusterApps",
+                "settings.json");
         }
     }
 }
