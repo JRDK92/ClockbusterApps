@@ -59,3 +59,8 @@ _ReSharper*/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+
+# Ignore all Visual Studio publish profiles
+*.pubxml
+*.pubxml.user
